@@ -1,0 +1,39 @@
+# Node dependencies
+node_modules/
+.npm/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+out/
+*.vsix
+
+# Web app build
+apps/web/dist/
+
+# VS Code extension build
+apps/vscode/out/
+apps/vscode/dist/
+apps/vscode/*.vsix
+
+# JetBrains plugin build & Gradle
+apps/jetbrains/.gradle/
+apps/jetbrains/build/
+apps/jetbrains/out/
+apps/jetbrains/.idea/
+apps/jetbrains/*.iml
+apps/jetbrains/gradle/wrapper/gradle-wrapper.jar
+
+# Logs & temp
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
+
+# Environment & IDE settings
+.env
+.env.local
+.vscode/

@@ -1,0 +1,20 @@
+{
+  "name": "@mdevs/mai-pulse",
+  "version": "0.0.0",
+  "private": true,
+  "description": "mAI Pulse Monorepo - Web, VS Code extension, and JetBrains plugin embedding mai-officiel.vercel.app",
+  "author": "mAI Pulse Team",
+  "license": "MIT",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "build:web": "npm --prefix apps/web run build",
+    "build:vscode": "npm --prefix apps/vscode run build",
+    "build:jetbrains": "cd apps/jetbrains && ./gradlew buildPlugin",
+    "dev:web": "npm --prefix apps/web run dev",
+    "package:vscode": "npm --prefix apps/vscode run package",
+    "clean": "rm -rf node_modules apps/*/node_modules apps/*/dist apps/*/out apps/jetbrains/build"
+  }
+}

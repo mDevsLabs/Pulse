@@ -1,0 +1,21 @@
+<idea-plugin>
+    <id>com.maipulse.plugin</id>
+    <name>mAI Pulse</name>
+    <vendor email="support@mai-officiel.vercel.app" url="https://mai-officiel.vercel.app">mAI Pulse</vendor>
+
+    <description><![CDATA[
+      <strong>mAI Pulse</strong> pour les environnements de développement JetBrains.<br/><br/>
+      Ce plugin intègre l'interface web officielle de <b>mAI Pulse</b> (https://mai-officiel.vercel.app) directement dans une fenêtre d'outil (Tool Window) de votre IDE (IntelliJ IDEA, WebStorm, PyCharm, GoLand, CLion, PHPStorm, etc.).
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow
+            id="mAI Pulse"
+            secondary="true"
+            icon="/icons/toolWindowIcon.svg"
+            anchor="right"
+            factoryClass="com.maipulse.plugin.MAIPulseToolWindowFactory"/>
+    </extensions>
+</idea-plugin>

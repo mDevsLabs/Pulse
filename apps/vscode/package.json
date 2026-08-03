@@ -1,0 +1,83 @@
+{
+  "name": "mai-pulse",
+  "displayName": "mAI Pulse",
+  "description": "Assistant AI mAI Pulse directement dans VS Code",
+  "version": "1.0.0",
+  "publisher": "mai-pulse",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mai-pulse/mai-pulse"
+  },
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "AI",
+    "Other"
+  ],
+  "icon": "media/icon.png",
+  "activationEvents": [
+    "onView:maiPulse.sidebarView",
+    "onCommand:maiPulse.openWebview",
+    "onCommand:maiPulse.refresh"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "mai-pulse-sidebar",
+          "title": "mAI Pulse",
+          "icon": "media/icon.png"
+        }
+      ]
+    },
+    "views": {
+      "mai-pulse-sidebar": [
+        {
+          "id": "maiPulse.sidebarView",
+          "name": "mAI Pulse",
+          "type": "webview"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "maiPulse.openWebview",
+        "title": "mAI Pulse: Ouvrir dans un onglet principal",
+        "icon": "$(layout-sidebar-right)"
+      },
+      {
+        "command": "maiPulse.refresh",
+        "title": "mAI Pulse: Rafraîchir l'interface",
+        "icon": "$(refresh)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "maiPulse.openWebview",
+          "when": "view == maiPulse.sidebarView",
+          "group": "navigation"
+        },
+        {
+          "command": "maiPulse.refresh",
+          "when": "view == maiPulse.sidebarView",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "node esbuild.js --production",
+    "watch": "node esbuild.js --watch",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.0",
+    "@types/vscode": "^1.75.0",
+    "esbuild": "^0.20.1",
+    "typescript": "^5.3.3"
+  }
+}
