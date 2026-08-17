@@ -1,9 +1,9 @@
 {
-  "name": "@mdevs/mai-pulse",
-  "version": "0.0.0",
+  "name": "@mdevs/pulse",
+  "version": "0.1.0",
   "private": true,
   "description": "mAI Pulse Monorepo - Web, VS Code extension, and JetBrains plugin embedding mai-officiel.vercel.app",
-  "author": "mAI Pulse Team",
+  "author": "mAI",
   "license": "MIT",
   "workspaces": [
     "apps/*"

@@ -4,7 +4,10 @@ export class MAIPulseSidebarProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'maiPulse.sidebarView';
   private _view?: vscode.WebviewView;
 
-  constructor(private readonly _extensionUri: vscode.Uri) {}
+  constructor(
+    private readonly _extensionUri: vscode.Uri,
+    private readonly _context: vscode.ExtensionContext
+  ) {}
 
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
@@ -30,6 +33,17 @@ export class MAIPulseSidebarProvider implements vscode.WebviewViewProvider {
           this.refresh();
           break;
         }
+        case 'saveSession': {
+          this._context.globalState.update('mai_session_token', data.token);
+          vscode.window.showInformationMessage('Session mAI Pulse sauvegardée.');
+          break;
+        }
+        case 'clearSession': {
+          this._context.globalState.update('mai_session_token', undefined);
+          vscode.window.showInformationMessage('Session mAI Pulse réinitialisée.');
+          this.refresh();
+          break;
+        }
       }
     });
   }
@@ -42,6 +56,9 @@ export class MAIPulseSidebarProvider implements vscode.WebviewViewProvider {
 
   private _getHtmlForWebview(webview: vscode.Webview): string {
     const embedUrl = "https://mai-officiel.vercel.app";
+    const statusUrl = "https://mai-officiel.instatus.com";
+    const githubUrl = "https://github.com/mDevsLabs/Pulse";
+    const savedToken = this._context.globalState.get<string>('mai_session_token') || '';
 
     return `<!DOCTYPE html>
 <html lang="fr">
@@ -69,6 +86,55 @@ export class MAIPulseSidebarProvider implements vscode.WebviewViewProvider {
             flex-direction: column;
         }
 
+        .top-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 8px;
+            background: var(--vscode-sideBar-background, #11131f);
+            border-bottom: 1px solid var(--vscode-sideBar-border, rgba(255,255,255,0.1));
+            font-size: 11px;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tb-btn {
+            background: transparent;
+            border: 1px solid var(--vscode-button-border, rgba(255,255,255,0.15));
+            color: var(--vscode-foreground, #cccccc);
+            padding: 2px 6px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tb-btn:hover {
+            background: var(--vscode-button-hoverBackground, rgba(255,255,255,0.1));
+        }
+
+        .status-link {
+            color: #10b981;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #10b981;
+        }
+
         .mai-iframe {
             width: 100%;
             height: 100%;
@@ -78,7 +144,7 @@ export class MAIPulseSidebarProvider implements vscode.WebviewViewProvider {
 
         .loader {
             position: absolute;
-            top: 0;
+            top: 30px;
             left: 0;
             right: 0;
             bottom: 0;
@@ -93,8 +159,8 @@ export class MAIPulseSidebarProvider implements vscode.WebviewViewProvider {
         }
 
         .spinner {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border: 3px solid rgba(255, 255, 255, 0.1);
             border-top-color: var(--vscode-progressBar-background, #00d2ff);
             border-radius: 50%;
@@ -106,33 +172,43 @@ export class MAIPulseSidebarProvider implements vscode.WebviewViewProvider {
         }
 
         .loader-text {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--vscode-descriptionForeground, #888888);
         }
 
         .fallback-btn {
             margin-top: 8px;
-            padding: 6px 14px;
+            padding: 4px 10px;
             background-color: var(--vscode-button-background, #007acc);
             color: var(--vscode-button-foreground, #ffffff);
             border: none;
-            border-radius: 4px;
+            border-radius: 3px;
             cursor: pointer;
-            font-size: 12px;
-        }
-
-        .fallback-btn:hover {
-            background-color: var(--vscode-button-hoverBackground, #0062a3);
+            font-size: 11px;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="top-toolbar">
+            <div class="toolbar-group">
+                <a href="${statusUrl}" onclick="openExternal('${statusUrl}'); return false;" class="status-link" title="Statut du service">
+                    <span class="status-dot"></span>
+                    <span>En ligne</span>
+                </a>
+            </div>
+            <div class="toolbar-group">
+                <button class="tb-btn" onclick="openExternal('${githubUrl}')" title="Dépôt GitHub mDevsLabs/Pulse">GitHub</button>
+                <button class="tb-btn" onclick="clearSession()" title="Réinitialiser la session">Cookies</button>
+            </div>
+        </div>
+
         <div id="loader" class="loader">
             <div class="spinner"></div>
             <div class="loader-text">Chargement de mAI Pulse...</div>
-            <button class="fallback-btn" onclick="openExternal()">Ouvrir dans le navigateur</button>
+            <button class="fallback-btn" onclick="openExternal('${embedUrl}')">Ouvrir dans le navigateur</button>
         </div>
+
         <iframe 
             id="maiIframe"
             src="${embedUrl}" 
@@ -156,17 +232,22 @@ export class MAIPulseSidebarProvider implements vscode.WebviewViewProvider {
             }
         }
 
-        function openExternal() {
+        function openExternal(url) {
             vscode.postMessage({
                 type: 'openExternal',
-                url: '${embedUrl}'
+                url: url
             });
         }
 
-        // Safety timeout to hide loader if iframe event doesn't trigger
+        function clearSession() {
+            vscode.postMessage({
+                type: 'clearSession'
+            });
+        }
+
         setTimeout(() => {
             hideLoader();
-        }, 5000);
+        }, 4000);
     </script>
 </body>
 </html>`;

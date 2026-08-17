@@ -1,12 +1,12 @@
 {
   "name": "mai-pulse",
   "displayName": "mAI Pulse",
-  "description": "Assistant AI mAI Pulse directement dans VS Code",
+  "description": "Assistant AI mAI Pulse directement dans VS Code avec gestion de session et état en direct",
   "version": "1.0.0",
   "publisher": "mai-pulse",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mai-pulse/mai-pulse"
+    "url": "https://github.com/mDevsLabs/Pulse"
   },
   "engines": {
     "vscode": "^1.75.0"
@@ -19,7 +19,10 @@
   "activationEvents": [
     "onView:maiPulse.sidebarView",
     "onCommand:maiPulse.openWebview",
-    "onCommand:maiPulse.refresh"
+    "onCommand:maiPulse.refresh",
+    "onCommand:maiPulse.clearSession",
+    "onCommand:maiPulse.openGithub",
+    "onCommand:maiPulse.checkStatus"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -51,6 +54,21 @@
         "command": "maiPulse.refresh",
         "title": "mAI Pulse: Rafraîchir l'interface",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "maiPulse.clearSession",
+        "title": "mAI Pulse: Effacer les cookies & la session",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "maiPulse.openGithub",
+        "title": "mAI Pulse: Ouvrir le dépôt GitHub (mDevsLabs/Pulse)",
+        "icon": "$(github)"
+      },
+      {
+        "command": "maiPulse.checkStatus",
+        "title": "mAI Pulse: Vérifier le statut des services",
+        "icon": "$(pulse)"
       }
     ],
     "menus": {
@@ -62,6 +80,11 @@
         },
         {
           "command": "maiPulse.refresh",
+          "when": "view == maiPulse.sidebarView",
+          "group": "navigation"
+        },
+        {
+          "command": "maiPulse.openGithub",
           "when": "view == maiPulse.sidebarView",
           "group": "navigation"
         }

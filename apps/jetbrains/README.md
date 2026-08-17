@@ -4,9 +4,11 @@ Ce plugin intègre l'application web **mAI Pulse** ([https://mai-officiel.vercel
 
 ## 🚀 Fonctionnalités
 - Intégration via le navigateur Chromium embarqué **JCEF** (*JetBrains Chromium Embedded Framework*)
-- Fenêtre latérale rétractable "mAI Pulse"
+- Fenêtre latérale "mAI Pulse" avec le nouveau logo puzzle multicolore
+- **Gestion des Cookies & de la Session** : Conservation automatique de la session avec bouton de réinitialisation des cookies
+- **Moniteur de Statut** : Lien direct vers [https://mai-officiel.instatus.com](https://mai-officiel.instatus.com)
+- **Lien GitHub** : Accès au dépôt [https://github.com/mDevsLabs/Pulse](https://github.com/mDevsLabs/Pulse)
 - Bouton de rafraîchissement rapide
-- Fallback automatique avec lien direct si JCEF n'est pas disponible
 
 ## 🛠️ Construction du Plugin
 
