@@ -4,8 +4,8 @@ plugins {
     id("org.jetbrains.intellij") version "1.17.2"
 }
 
-group = property("pluginGroup").toString()
-version = property("pluginVersion").toString()
+group = providers.gradleProperty("pluginGroup").get()
+version = providers.gradleProperty("pluginVersion").get()
 
 repositories {
     mavenCentral()
@@ -13,8 +13,8 @@ repositories {
 
 // Configure Gradle IntelliJ Plugin
 intellij {
-    version.set(property("platformVersion").toString())
-    type.set(property("platformType").toString())
+    version.set(providers.gradleProperty("platformVersion"))
+    type.set(providers.gradleProperty("platformType"))
     plugins.set(listOf(/* Plugins if needed */))
 }
 
@@ -29,8 +29,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set(property("platformSinceBuild").toString())
-        untilBuild.set(property("platformUntilBuild").toString())
+        sinceBuild.set(providers.gradleProperty("platformSinceBuild"))
+        untilBuild.set(providers.gradleProperty("platformUntilBuild"))
     }
 
     signPlugin {
@@ -43,3 +43,4 @@ tasks {
         token.set(providers.environmentVariable("PUBLISH_TOKEN"))
     }
 }
+

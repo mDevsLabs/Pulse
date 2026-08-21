@@ -106,11 +106,12 @@
     "vscode:prepublish": "npm run build",
     "build": "node esbuild.js --production",
     "watch": "node esbuild.js --watch",
-    "package": "vsce package"
+    "package": "vsce package --no-git-tag-version"
   },
   "devDependencies": {
     "@types/node": "^18.15.0",
     "@types/vscode": "^1.75.0",
+    "@vscode/vsce": "^2.24.0",
     "esbuild": "^0.20.1",
     "typescript": "^5.3.3"
   }

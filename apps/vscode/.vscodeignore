@@ -1,3 +1,4 @@
+../**
 .vscode/**
 src/**
 node_modules/**
@@ -5,3 +6,4 @@ tsconfig.json
 esbuild.js
 vsc-extension-quickstart.md
 *.vsix
+
