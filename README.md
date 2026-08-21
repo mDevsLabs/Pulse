@@ -1,11 +1,12 @@
 # 🌟 mAI Pulse - Monorepo
 
-Bienvenue dans le dépôt mono-repo officiel de **mAI Pulse**. Ce projet regroupe les applications et extensions permettant d'intégrer l'interface [https://mai-officiel.vercel.app](https://mai-officiel.vercel.app) dans différents environnements (Web, VS Code, IDEs JetBrains).
+Bienvenue dans le dépôt mono-repo officiel de **mAI Pulse**. Ce projet regroupe les applications et extensions permettant d'intégrer **mAI Web** ([mai-officiel.vercel.app](https://mai-officiel.vercel.app)) et le **site officiel** ([mai-devs.vercel.app](https://mai-devs.vercel.app)) dans différents environnements (Web, VS Code, IDEs JetBrains), avec un basculeur rapide entre les deux.
 
 ---
 
 ## 🔗 Liens Officiels & Endpoints
-* **Site Web / Embed** : [https://mai-officiel.vercel.app](https://mai-officiel.vercel.app)
+* **mAI Web** : [https://mai-officiel.vercel.app](https://mai-officiel.vercel.app)
+* **Site officiel** : [https://mai-devs.vercel.app](https://mai-devs.vercel.app)
 * **Statut des Services** : [https://mai-officiel.instatus.com](https://mai-officiel.instatus.com)
 * **API System** : [https://mai.val.run](https://mai.val.run)
 * **Dépôt GitHub** : [https://github.com/mDevsLabs/Pulse](https://github.com/mDevsLabs/Pulse)
@@ -34,6 +35,7 @@ Pulse/
 ### 1. 🌐 Web (`apps/web`)
 * **Logo** : `web.jpg` (Boussole Globe WWW multicolore)
 * **Fonctionnalités** :
+  * **Double destination** : bascule instantanée entre mAI Web et le site officiel (choix mémorisé).
   * Intégration iframe réactive et fluide.
   * **Cookies & Auth Manager** : Fenêtre modale permettant de configurer/sauvegarder le jeton de session `mAI_session` et les cookies personnalisés.
   * **Statut en temps réel** : Test de latence dynamique vers `https://mai.val.run` et badge de statut lié à `https://mai-officiel.instatus.com`.
@@ -42,6 +44,7 @@ Pulse/
 ### 2. 🧩 VS Code Extension (`apps/vscode`)
 * **Logo** : `vscode.png` (Logo 'm' / Play néon)
 * **Fonctionnalités** :
+  * **Double destination** : bascule mAI Web / Site officiel (sidebar, onglet, barre d'état et commande `mAI Pulse: Basculer mAI Web / Site officiel`).
   * **Activity Bar** : Vue latérale intégrée avec icône dédiée.
   * **Main Editor Panel** : Commande `mAI Pulse: Ouvrir dans un onglet principal` pour utiliser l'interface en grand écran.
   * **Status Bar Item** : Indicateur dans la barre d'état de VS Code.
@@ -51,6 +54,7 @@ Pulse/
 ### 3. ⚡ JetBrains Plugin (`apps/jetbrains`)
 * **Logo** : `jetbrains.png` (Pièce de puzzle dégradé néon)
 * **Fonctionnalités** :
+  * **Double destination** : boutons `mAI Web` / `Officiel` dans la barre d'outils (choix mémorisé).
   * Fenêtre d'outil latérale (*Tool Window*) réductible.
   * Rendu Chromium via **JCEF** (*JetBrains Chromium Embedded Framework*).
   * **Gestionnaire de Cookies** : Effacement et réinitialisation de session via `CefCookieManager`.

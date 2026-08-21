@@ -1,13 +1,34 @@
 import * as vscode from 'vscode';
 import { MAIPulseSidebarProvider } from './sidebarProvider';
 import { MAIPulseWebviewPanel } from './webviewPanel';
+import {
+  DESTINATION_KEY,
+  DestinationId,
+  getDestination,
+  parseDestination,
+  toggleDestinationId
+} from './destinations';
 
 let statusBarItem: vscode.StatusBarItem;
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('mAI Pulse extension est désormais active !');
 
-  const provider = new MAIPulseSidebarProvider(context.extensionUri, context);
+  let provider: MAIPulseSidebarProvider;
+
+  const applyDestination = (id: DestinationId) => {
+    const current = parseDestination(context.globalState.get(DESTINATION_KEY));
+    if (current === id) {
+      return;
+    }
+    const dest = getDestination(id);
+    void context.globalState.update(DESTINATION_KEY, id);
+    provider.applyDestination(dest);
+    MAIPulseWebviewPanel.applyDestination(dest);
+    updateStatusBar(id);
+  };
+
+  provider = new MAIPulseSidebarProvider(context.extensionUri, context, applyDestination);
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
@@ -23,16 +44,15 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Status Bar Item
   statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-  statusBarItem.command = 'maiPulse.openWebview';
-  statusBarItem.text = '$(pulse) mAI Pulse';
-  statusBarItem.tooltip = 'mAI Pulse (mDevsLabs/Pulse) - Cliquer pour ouvrir';
+  statusBarItem.command = 'maiPulse.toggleDestination';
   statusBarItem.show();
   context.subscriptions.push(statusBarItem);
+  updateStatusBar(parseDestination(context.globalState.get(DESTINATION_KEY)));
 
   // Commands
   context.subscriptions.push(
     vscode.commands.registerCommand('maiPulse.openWebview', () => {
-      MAIPulseWebviewPanel.createOrShow(context.extensionUri);
+      MAIPulseWebviewPanel.createOrShow(context.extensionUri, context, applyDestination);
     })
   );
 
@@ -62,6 +82,25 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.env.openExternal(vscode.Uri.parse('https://mai-officiel.instatus.com'));
     })
   );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('maiPulse.toggleDestination', () => {
+      const current = parseDestination(context.globalState.get(DESTINATION_KEY));
+      const next = toggleDestinationId(current);
+      applyDestination(next);
+      const dest = getDestination(next);
+      vscode.window.showInformationMessage(`mAI Pulse : bascule vers ${dest.label}.`);
+    })
+  );
+}
+
+function updateStatusBar(id: DestinationId) {
+  if (!statusBarItem) {
+    return;
+  }
+  const dest = getDestination(id);
+  statusBarItem.text = `$(pulse) ${dest.label}`;
+  statusBarItem.tooltip = `mAI Pulse — ${dest.label} (${dest.url}). Cliquer pour basculer.`;
 }
 
 export function deactivate() {}

@@ -5,21 +5,39 @@ import {
   Maximize2, 
   Cookie, 
   Github, 
-  Activity, 
   CheckCircle2, 
-  AlertCircle, 
   X, 
   Key, 
   Save, 
   Trash2,
-  Zap
+  Zap,
+  Globe,
+  Sparkles
 } from 'lucide-react';
 import './App.css';
 
-const EMBED_URL = "https://mai-officiel.vercel.app";
+const DESTINATIONS = {
+  web: {
+    id: 'web',
+    label: 'mAI Web',
+    url: 'https://mai-officiel.vercel.app',
+  },
+  official: {
+    id: 'official',
+    label: 'Officiel',
+    url: 'https://mai-devs.vercel.app',
+  },
+};
+
+const DESTINATION_KEY = 'mai_pulse_destination';
 const STATUS_URL = "https://mai-officiel.instatus.com";
 const API_URL = "https://mai.val.run";
 const GITHUB_URL = "https://github.com/mDevsLabs/Pulse";
+
+const readStoredDestination = () => {
+  const stored = localStorage.getItem(DESTINATION_KEY);
+  return stored === 'official' ? 'official' : 'web';
+};
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -30,8 +48,10 @@ export default function App() {
   const [sessionToken, setSessionToken] = useState(() => localStorage.getItem('mai_session_token') || '');
   const [customCookies, setCustomCookies] = useState(() => localStorage.getItem('mai_custom_cookies') || '');
   const [savedSuccessMsg, setSavedSuccessMsg] = useState('');
+  const [destinationId, setDestinationId] = useState(readStoredDestination);
 
   const iframeRef = useRef(null);
+  const destination = DESTINATIONS[destinationId];
 
   // Check API and Instatus Health
   useEffect(() => {
@@ -53,10 +73,19 @@ export default function App() {
     }
   };
 
+  const switchDestination = (id) => {
+    if (id === destinationId) {
+      return;
+    }
+    setDestinationId(id);
+    localStorage.setItem(DESTINATION_KEY, id);
+    setIsLoading(true);
+  };
+
   const handleRefresh = () => {
     setIsLoading(true);
     if (iframeRef.current) {
-      iframeRef.current.src = EMBED_URL;
+      iframeRef.current.src = destination.url;
     }
   };
 
@@ -125,6 +154,27 @@ export default function App() {
           </div>
 
           <div className="controls-section">
+            <div className="dest-switch" role="group" aria-label="Choisir la destination">
+              <button
+                type="button"
+                className={`dest-btn ${destinationId === 'web' ? 'active' : ''}`}
+                onClick={() => switchDestination('web')}
+                title="mAI Web — mai-officiel.vercel.app"
+              >
+                <Globe size={14} />
+                <span>mAI Web</span>
+              </button>
+              <button
+                type="button"
+                className={`dest-btn ${destinationId === 'official' ? 'active' : ''}`}
+                onClick={() => switchDestination('official')}
+                title="Site officiel — mai-devs.vercel.app"
+              >
+                <Sparkles size={14} />
+                <span>Officiel</span>
+              </button>
+            </div>
+
             <button 
               className="action-btn"
               onClick={() => setShowCookieModal(true)}
@@ -163,14 +213,14 @@ export default function App() {
             </a>
 
             <a 
-              href={EMBED_URL} 
+              href={destination.url} 
               target="_blank" 
               rel="noopener noreferrer" 
               className="action-btn primary"
-              title="Ouvrir le site officiel"
+              title={`Ouvrir ${destination.label} dans un nouvel onglet`}
             >
               <ExternalLink size={16} />
-              <span>Site Officiel</span>
+              <span>Ouvrir</span>
             </a>
           </div>
         </header>
@@ -180,14 +230,15 @@ export default function App() {
         {isLoading && (
           <div className="loading-overlay">
             <div className="spinner"></div>
-            <p className="loading-text">Chargement de mAI Pulse...</p>
+            <p className="loading-text">Chargement de {destination.label}...</p>
           </div>
         )}
         <iframe
+          key={destination.id}
           ref={iframeRef}
-          src={EMBED_URL}
+          src={destination.url}
           className="mai-iframe"
-          title="mAI Pulse Interface"
+          title={destination.label}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; camera; microphone"
           sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-downloads"
           onLoad={() => setIsLoading(false)}

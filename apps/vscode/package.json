@@ -22,7 +22,8 @@
     "onCommand:maiPulse.refresh",
     "onCommand:maiPulse.clearSession",
     "onCommand:maiPulse.openGithub",
-    "onCommand:maiPulse.checkStatus"
+    "onCommand:maiPulse.checkStatus",
+    "onCommand:maiPulse.toggleDestination"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -69,6 +70,11 @@
         "command": "maiPulse.checkStatus",
         "title": "mAI Pulse: Vérifier le statut des services",
         "icon": "$(pulse)"
+      },
+      {
+        "command": "maiPulse.toggleDestination",
+        "title": "mAI Pulse: Basculer mAI Web / Site officiel",
+        "icon": "$(arrow-swap)"
       }
     ],
     "menus": {
@@ -85,6 +91,11 @@
         },
         {
           "command": "maiPulse.openGithub",
+          "when": "view == maiPulse.sidebarView",
+          "group": "navigation"
+        },
+        {
+          "command": "maiPulse.toggleDestination",
           "when": "view == maiPulse.sidebarView",
           "group": "navigation"
         }

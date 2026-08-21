@@ -1,8 +1,9 @@
 # mAI Pulse - Plugin JetBrains IDEs
 
-Ce plugin intègre l'application web **mAI Pulse** ([https://mai-officiel.vercel.app](https://mai-officiel.vercel.app)) directement dans une fenêtre d'outil (*Tool Window*) au sein des IDEs de la suite JetBrains (IntelliJ IDEA, WebStorm, PyCharm, GoLand, CLion, PHPStorm, Rider, etc.).
+Ce plugin intègre **mAI Pulse** directement dans une fenêtre d'outil (*Tool Window*) au sein des IDEs de la suite JetBrains (IntelliJ IDEA, WebStorm, PyCharm, GoLand, CLion, PHPStorm, Rider, etc.). Basculez entre **mAI Web** ([mai-officiel.vercel.app](https://mai-officiel.vercel.app)) et le **site officiel** ([mai-devs.vercel.app](https://mai-devs.vercel.app)).
 
 ## 🚀 Fonctionnalités
+- Double destination : boutons `mAI Web` / `Officiel` (choix mémorisé)
 - Intégration via le navigateur Chromium embarqué **JCEF** (*JetBrains Chromium Embedded Framework*)
 - Fenêtre latérale "mAI Pulse" avec le nouveau logo puzzle multicolore
 - **Gestion des Cookies & de la Session** : Conservation automatique de la session avec bouton de réinitialisation des cookies

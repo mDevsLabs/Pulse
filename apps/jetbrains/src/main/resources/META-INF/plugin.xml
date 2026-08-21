@@ -5,9 +5,11 @@
 
     <description><![CDATA[
       <strong>mAI Pulse</strong> pour les environnements de développement JetBrains.<br/><br/>
-      Ce plugin intègre l'interface web officielle de <b>mAI Pulse</b> (https://mai-officiel.vercel.app) directement dans une fenêtre d'outil (Tool Window) de votre IDE (IntelliJ IDEA, WebStorm, PyCharm, GoLand, CLion, PHPStorm, etc.).<br/><br/>
+      Ce plugin intègre l'interface de <b>mAI Pulse</b> directement dans une fenêtre d'outil (Tool Window) de votre IDE (IntelliJ IDEA, WebStorm, PyCharm, GoLand, CLion, PHPStorm, etc.).<br/><br/>
+      Basculez instantanément entre <b>mAI Web</b> (https://mai-officiel.vercel.app) et le <b>site officiel</b> (https://mai-devs.vercel.app).<br/><br/>
       <b>Fonctionnalités :</b>
       <ul>
+        <li>Double destination : mAI Web / Site officiel, avec conservation du choix</li>
         <li>Navigation Web intégrée basée sur Chromium (JCEF)</li>
         <li>Gestion et conservation de la session et des cookies de connexion</li>
         <li>Suivi en direct du statut des services (https://mai-officiel.instatus.com)</li>

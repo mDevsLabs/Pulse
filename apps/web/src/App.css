@@ -116,6 +116,43 @@
   gap: 0.6rem;
 }
 
+.dest-switch {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px;
+  gap: 3px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+}
+
+.dest-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 0.4rem 0.75rem;
+  border-radius: 7px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.dest-btn:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dest-btn.active {
+  color: #fff;
+  background: linear-gradient(135deg, #0072ff, #00d2ff);
+  box-shadow: 0 4px 12px rgba(0, 114, 255, 0.28);
+}
+
 .action-btn {
   display: inline-flex;
   align-items: center;
@@ -438,6 +475,9 @@
     display: none;
   }
   .action-btn span {
+    display: none;
+  }
+  .dest-btn span {
     display: none;
   }
   .header {

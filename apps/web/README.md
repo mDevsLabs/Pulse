@@ -1,12 +1,13 @@
 # mAI Pulse - Web Application
 
-Cette application web est la version intégrée de mAI Pulse qui héberge l'interface de [https://mai-officiel.vercel.app](https://mai-officiel.vercel.app).
+Cette application web est la version intégrée de mAI Pulse. Elle permet de basculer entre **mAI Web** ([mai-officiel.vercel.app](https://mai-officiel.vercel.app)) et le **site officiel** ([mai-devs.vercel.app](https://mai-devs.vercel.app)).
 
 ## 🚀 Fonctionnalités
+- Double destination : interrupteur `mAI Web` / `Officiel` (choix mémorisé)
 - Intégration iframe réactive et fluide
 - Barre de navigation moderne avec logo et statut en direct
 - Mode plein écran et rafraîchissement rapide
-- Accès direct vers le site officiel
+- Ouverture de la destination courante dans un nouvel onglet
 - Squelette et overlay de chargement élégant
 
 ## 🛠️ Développement & Build

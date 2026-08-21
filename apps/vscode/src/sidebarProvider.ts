@@ -1,4 +1,14 @@
 import * as vscode from 'vscode';
+import {
+  Destination,
+  DestinationId,
+  DESTINATION_KEY,
+  getDestination,
+  getSwitcherCss,
+  getSwitcherMarkup,
+  getSwitcherScript,
+  parseDestination
+} from './destinations';
 
 export class MAIPulseSidebarProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'maiPulse.sidebarView';
@@ -6,7 +16,8 @@ export class MAIPulseSidebarProvider implements vscode.WebviewViewProvider {
 
   constructor(
     private readonly _extensionUri: vscode.Uri,
-    private readonly _context: vscode.ExtensionContext
+    private readonly _context: vscode.ExtensionContext,
+    private readonly _onDestinationChange: (id: DestinationId) => void
   ) {}
 
   public resolveWebviewView(
@@ -44,6 +55,10 @@ export class MAIPulseSidebarProvider implements vscode.WebviewViewProvider {
           this.refresh();
           break;
         }
+        case 'setDestination': {
+          this._onDestinationChange(parseDestination(data.destination));
+          break;
+        }
       }
     });
   }
@@ -54,11 +69,23 @@ export class MAIPulseSidebarProvider implements vscode.WebviewViewProvider {
     }
   }
 
+  public applyDestination(dest: Destination) {
+    if (this._view) {
+      this._view.webview.postMessage({
+        type: 'setDestination',
+        destination: dest.id,
+        url: dest.url,
+        label: dest.label
+      });
+    }
+  }
+
   private _getHtmlForWebview(webview: vscode.Webview): string {
-    const embedUrl = "https://mai-officiel.vercel.app";
+    const dest = getDestination(parseDestination(this._context.globalState.get(DESTINATION_KEY)));
+    const embedUrl = dest.url;
+    const destLabel = dest.label;
     const statusUrl = "https://mai-officiel.instatus.com";
     const githubUrl = "https://github.com/mDevsLabs/Pulse";
-    const savedToken = this._context.globalState.get<string>('mai_session_token') || '';
 
     return `<!DOCTYPE html>
 <html lang="fr">
@@ -94,6 +121,7 @@ export class MAIPulseSidebarProvider implements vscode.WebviewViewProvider {
             background: var(--vscode-sideBar-background, #11131f);
             border-bottom: 1px solid var(--vscode-sideBar-border, rgba(255,255,255,0.1));
             font-size: 11px;
+            gap: 8px;
         }
 
         .toolbar-group {
@@ -101,7 +129,7 @@ export class MAIPulseSidebarProvider implements vscode.WebviewViewProvider {
             align-items: center;
             gap: 6px;
         }
-
+${getSwitcherCss()}
         .tb-btn {
             background: transparent;
             border: 1px solid var(--vscode-button-border, rgba(255,255,255,0.15));
@@ -198,6 +226,7 @@ export class MAIPulseSidebarProvider implements vscode.WebviewViewProvider {
                 </a>
             </div>
             <div class="toolbar-group">
+${getSwitcherMarkup(dest.id)}
                 <button class="tb-btn" onclick="openExternal('${githubUrl}')" title="Dépôt GitHub mDevsLabs/Pulse">GitHub</button>
                 <button class="tb-btn" onclick="clearSession()" title="Réinitialiser la session">Cookies</button>
             </div>
@@ -205,8 +234,8 @@ export class MAIPulseSidebarProvider implements vscode.WebviewViewProvider {
 
         <div id="loader" class="loader">
             <div class="spinner"></div>
-            <div class="loader-text">Chargement de mAI Pulse...</div>
-            <button class="fallback-btn" onclick="openExternal('${embedUrl}')">Ouvrir dans le navigateur</button>
+            <div class="loader-text">Chargement de ${destLabel}...</div>
+            <button class="fallback-btn" onclick="openExternal(document.getElementById('maiIframe').src)">Ouvrir dans le navigateur</button>
         </div>
 
         <iframe 
@@ -244,7 +273,7 @@ export class MAIPulseSidebarProvider implements vscode.WebviewViewProvider {
                 type: 'clearSession'
             });
         }
-
+${getSwitcherScript()}
         setTimeout(() => {
             hideLoader();
         }, 4000);
