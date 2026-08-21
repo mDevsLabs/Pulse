@@ -1,0 +1,211 @@
+name: 🚀 Build & Package Extensions
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - 'v*'
+    paths:
+      - 'apps/**'
+      - 'package.json'
+      - 'pnpm-workspace.yaml'
+      - '.github/workflows/**'
+  pull_request:
+    branches:
+      - main
+      - master
+    paths:
+      - 'apps/**'
+      - 'package.json'
+      - 'pnpm-workspace.yaml'
+      - '.github/workflows/**'
+  workflow_dispatch:
+    inputs:
+      create_release:
+        description: 'Publier automatiquement une release GitHub si tagué ou forcé'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  packages: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # =========================================================================
+  # 1. Extension VS Code (.vsix)
+  # =========================================================================
+  build-vscode:
+    name: 🧩 VS Code Extension (.vsix)
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'apps/vscode/package-lock.json'
+
+      - name: 📦 Install dependencies
+        working-directory: apps/vscode
+        run: npm ci --prefer-offline || npm install
+
+      - name: 🔨 Build extension
+        working-directory: apps/vscode
+        run: npm run build
+
+      - name: 📦 Package VSIX extension
+        working-directory: apps/vscode
+        run: npx --yes @vscode/vsce package --no-git-tag-version
+
+      - name: 📤 Upload VS Code Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mai-pulse-vscode-extension
+          path: apps/vscode/*.vsix
+          if-no-files-found: error
+          retention-days: 14
+
+  # =========================================================================
+  # 2. Plugin JetBrains (.zip)
+  # =========================================================================
+  build-jetbrains:
+    name: ⚡ JetBrains Plugin (.zip)
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ☕ Setup Java JDK (Temurin 17)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 🐘 Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.5'
+
+      - name: 🔨 Build JetBrains Plugin
+        working-directory: apps/jetbrains
+        run: gradle buildPlugin --no-daemon
+
+      - name: 📤 Upload JetBrains Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mai-pulse-jetbrains-plugin
+          path: apps/jetbrains/build/distributions/*.zip
+          if-no-files-found: error
+          retention-days: 14
+
+  # =========================================================================
+  # 3. Application Web (dist & zip)
+  # =========================================================================
+  build-web:
+    name: 🌐 Web Application (dist)
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'apps/web/package-lock.json'
+
+      - name: 📦 Install dependencies
+        working-directory: apps/web
+        run: npm ci --prefer-offline || npm install
+
+      - name: 🔨 Build web app
+        working-directory: apps/web
+        run: npm run build
+
+      - name: 🗜️ Archive web build
+        working-directory: apps/web
+        run: |
+          cd dist && zip -r ../mai-pulse-web.zip . && cd ..
+
+      - name: 📤 Upload Web Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mai-pulse-web-bundle
+          path: |
+            apps/web/dist/
+            apps/web/mai-pulse-web.zip
+          if-no-files-found: error
+          retention-days: 14
+
+  # =========================================================================
+  # 4. Regroupement & Publication de Release GitHub (sur tag v* ou dispatch)
+  # =========================================================================
+  bundle-and-release:
+    name: 🚀 Release & Bundle Packages
+    needs: [build-vscode, build-jetbrains, build-web]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 📁 Create release packages directory
+        run: mkdir -p release-packages
+
+      - name: 📥 Download VS Code Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: mai-pulse-vscode-extension
+          path: release-packages/
+
+      - name: 📥 Download JetBrains Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: mai-pulse-jetbrains-plugin
+          path: release-packages/
+
+      - name: 📥 Download Web Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: mai-pulse-web-bundle
+          path: release-packages/web/
+
+      - name: 🗂️ Consolidate packages
+        run: |
+          if [ -f release-packages/web/mai-pulse-web.zip ]; then
+            mv release-packages/web/mai-pulse-web.zip release-packages/
+          fi
+          ls -la release-packages/
+
+      - name: 📤 Upload All Packages Unified Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mai-pulse-all-packages
+          path: |
+            release-packages/*.vsix
+            release-packages/*.zip
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: 🏷️ Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.create_release == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release-packages/*.vsix
+            release-packages/*.zip
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -87,5 +87,16 @@ npm install
 
 ---
 
+## 🤖 Intégration Continue & CI/CD (GitHub Actions)
+
+Un workflow automatisé est configuré dans [`.github/workflows/build-extensions.yml`](.github/workflows/build-extensions.yml) pour :
+1. 🧩 **Compiler et packager l'extension VS Code** (`.vsix`)
+2. ⚡ **Compiler et packager le plugin JetBrains** (`.zip`)
+3. 🌐 **Compiler et archiver l'application Web** (`dist` & `.zip`)
+4. 🚀 **Publier automatiquement les artefacts et releases GitHub** lors des tags `v*` ou via déclenchement manuel (*workflow_dispatch*).
+
+---
+
 ## 📜 Licence
 Ce projet est distribué sous la licence [MIT](LICENSE).
+
