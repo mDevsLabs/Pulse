@@ -5,6 +5,7 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBPanel
+import com.intellij.ui.jcef.JBCefApp
 import com.intellij.ui.jcef.JBCefBrowser
 import org.cef.network.CefCookieManager
 import java.awt.BorderLayout
@@ -35,7 +36,7 @@ class MAIPulseWindowContent(private val project: Project) {
 
         fun currentUrl(): String = if (destination == DEST_OFFICIAL) OFFICIAL_URL else WEB_URL
 
-        if (JBCefBrowser.isSupported()) {
+        if (JBCefApp.isSupported()) {
             val browser = JBCefBrowser(currentUrl())
 
             val north = JPanel(BorderLayout())
@@ -95,7 +96,7 @@ class MAIPulseWindowContent(private val project: Project) {
                 toolTipText = "Effacer les cookies et réinitialiser la session"
                 addActionListener {
                     try {
-                        val cookieManager = CefCookieManager.getGlobalCookieManager()
+                        val cookieManager = CefCookieManager.getGlobalManager()
                         cookieManager?.deleteCookies("", "")
                     } catch (e: Exception) {
                         e.printStackTrace()

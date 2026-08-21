@@ -1,9 +1,24 @@
+# Ignore all monorepo parent files and directories
+..
 ../**
+../..
+../../**
+../.*
+../../.*
+
+# Ignore dotfiles and metadata
+.*
+.git/**
+.github/**
 .vscode/**
+
+# Ignore source and build tooling
 src/**
 node_modules/**
 tsconfig.json
 esbuild.js
 vsc-extension-quickstart.md
 *.vsix
+*.log
+
 
